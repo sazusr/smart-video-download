@@ -1,0 +1,10 @@
+﻿{
+  "hosting": {
+    "site": "smart-video-download",
+    "public": "static",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "headers": [
+      { "source": "**/*.webmanifest", "headers": [{ "key": "Content-Type", "value": "application/manifest+json" }] }
+    ]
+  }
+}
