@@ -1,0 +1,15 @@
+# লগইন cookies — পাসওয়ার্ডের মতো গোপন, কখনো আপলোড করবেন না
+cookies.txt
+*.cookies
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# ডাউনলোড হওয়া ফাইল
+*.mp4
+*.mp3
+*.mkv
+*.part
+--Frag*

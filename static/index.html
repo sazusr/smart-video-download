@@ -1,0 +1,1110 @@
+<!doctype html>
+<html lang="bn" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ভিডিও ডাউনলোডার — YouTube, Facebook, Instagram</title>
+<!-- ফোনে "Add to Home Screen" করলে আলাদা অ্যাপের মতো খোলে -->
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ডাউনলোডার">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#0c0d11">
+<script>
+  // পেজ লোডের আগেই থিম ঠিক করি, যাতে ঝলক না দেখায়
+  (function () {
+    var t = localStorage.getItem("theme");
+    if (!t) t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    document.documentElement.dataset.theme = t;
+    // ফোনের স্ট্যাটাস বার/ব্রাউজারের রং থিমের সাথে মিলিয়ে
+    document.querySelector('meta[name="theme-color"]').content = t === "light" ? "#f8f6f3" : "#0c0d11";
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@300..800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff5a36'/%3E%3Cstop offset='1' stop-color='%23ffb020'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Cpath d='M16 8v11m0 0l-5-5m5 5l5-5M10 24h12' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+  /* ---------- theme ---------- */
+  :root {
+    /* পুরো সাইটে একটাই ফন্ট: Anek Bangla */
+    --font: "Anek Bangla", "Nirmala UI", system-ui, sans-serif;
+    --font-display: var(--font);
+    --grad: linear-gradient(135deg, #ff4d2e 0%, #ff7a29 45%, #ffb020 100%);
+    --radius: 20px;
+  }
+  [data-theme="dark"] {
+    --bg: #0c0d11;
+    --glow-1: rgba(255, 84, 46, .22);
+    --glow-2: rgba(255, 176, 32, .12);
+    --card: #15171d;
+    --card-2: #1b1e25;
+    --line: rgba(255, 255, 255, .07);
+    --line-2: rgba(255, 255, 255, .14);
+    --text: #f4f5f7;
+    --muted: #a0a6b2;
+    --faint: #6d7380;
+    --accent: #ff6a3d;
+    --accent-soft: rgba(255, 106, 61, .13);
+    --ok: #34d399;
+    --ok-soft: rgba(52, 211, 153, .12);
+    --err: #fb7185;
+    --err-soft: rgba(251, 113, 133, .10);
+    --shadow: 0 30px 80px -30px rgba(0, 0, 0, .7);
+    --shadow-btn: 0 10px 30px -10px rgba(255, 90, 54, .65);
+    --t2k: #b49cff; --t2k-bg: rgba(140, 108, 255, .14);
+    --tfhd: #6fb2ff; --tfhd-bg: rgba(64, 148, 255, .14);
+    --thd: #3fd6c0; --thd-bg: rgba(32, 200, 176, .13);
+    --tsd: #a3acbb; --tsd-bg: rgba(160, 170, 190, .12);
+  }
+  [data-theme="light"] {
+    --bg: #f8f6f3;
+    --glow-1: rgba(255, 106, 61, .16);
+    --glow-2: rgba(255, 176, 32, .14);
+    --card: #ffffff;
+    --card-2: #faf8f6;
+    --line: #ece8e3;
+    --line-2: #ddd7cf;
+    --text: #1a1b20;
+    --muted: #5d6370;
+    --faint: #8b909a;
+    --accent: #ea4a1f;
+    --accent-soft: rgba(234, 74, 31, .09);
+    --ok: #059669;
+    --ok-soft: rgba(5, 150, 105, .09);
+    --err: #dc2626;
+    --err-soft: rgba(220, 38, 38, .07);
+    --shadow: 0 30px 70px -36px rgba(70, 40, 20, .28);
+    --shadow-btn: 0 10px 26px -10px rgba(234, 74, 31, .55);
+    --t2k: #6d4fe0; --t2k-bg: rgba(109, 79, 224, .10);
+    --tfhd: #1f6fd6; --tfhd-bg: rgba(31, 111, 214, .09);
+    --thd: #0b8f7f; --thd-bg: rgba(11, 143, 127, .10);
+    --tsd: #5f6878; --tsd-bg: rgba(95, 104, 120, .10);
+  }
+
+  /* ---------- base ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+  button, a, input { touch-action: manipulation; }
+  /* হোম স্ক্রিন থেকে খোলা অ্যাপে টেনে রিফ্রেশ হয়ে চলমান ডাউনলোডের হিসাব যেন হারিয়ে না যায় */
+  @media (display-mode: standalone) { html, body { overscroll-behavior-y: contain; } }
+  body {
+    margin: 0; min-height: 100vh; background: var(--bg); color: var(--text);
+    font-family: var(--font); font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased; transition: background .25s, color .25s;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(700px 380px at 15% -8%, var(--glow-1), transparent 65%),
+      radial-gradient(600px 360px at 92% -4%, var(--glow-2), transparent 65%);
+  }
+  button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+  button:disabled { cursor: not-allowed; opacity: .5; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 10px; }
+  svg { display: block; flex-shrink: 0; }
+  /* notch/হোম-বার আছে এমন ফোনে লেখা কিনারায় ঢাকা পড়বে না */
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 max(20px, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(20px, env(safe-area-inset-left)); }
+
+  /* ---------- nav ---------- */
+  nav { display: flex; align-items: center; justify-content: space-between; padding: max(20px, env(safe-area-inset-top)) 0 20px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; font-size: 19px; }
+  .logo { width: 36px; height: 36px; border-radius: 11px; background: var(--grad); display: grid; place-items: center; box-shadow: var(--shadow-btn); }
+  .icon-btn {
+    width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center;
+    border: 1px solid var(--line); background: var(--card); color: var(--muted); transition: color .2s, border-color .2s;
+  }
+  .icon-btn:hover { color: var(--text); border-color: var(--line-2); }
+  [data-theme="dark"] .sun, [data-theme="light"] .moon { display: none; }
+
+  /* ---------- hero ---------- */
+  .hero { text-align: center; padding: 44px 0 10px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--accent);
+    background: var(--accent-soft); padding: 5px 14px; border-radius: 999px; margin-bottom: 20px;
+  }
+  .eyebrow i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  h1 {
+    font-family: var(--font-display); font-weight: 800; letter-spacing: -.01em;
+    font-size: clamp(34px, 6.4vw, 60px); line-height: 1.18; margin: 0 0 16px;
+  }
+  .grad-text { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { color: var(--muted); font-size: clamp(16px, 2.2vw, 18px); max-width: 560px; margin: 0 auto 34px; }
+
+  /* ---------- search ---------- */
+  .search {
+    display: flex; align-items: center; gap: 8px; max-width: 720px; margin: 0 auto;
+    background: var(--card); border: 1px solid var(--line-2); border-radius: 18px; padding: 8px 8px 8px 18px;
+    box-shadow: var(--shadow); transition: border-color .2s, box-shadow .2s;
+  }
+  .search:focus-within { border-color: var(--accent); box-shadow: var(--shadow), 0 0 0 4px var(--accent-soft); }
+  .search > svg { color: var(--faint); }
+  .search input {
+    flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--text);
+    font: inherit; font-size: 17px; padding: 12px 4px;
+  }
+  .search input::placeholder { color: var(--faint); }
+  .paste-btn {
+    display: flex; align-items: center; gap: 6px; padding: 0 14px; height: 48px; border-radius: 12px;
+    color: var(--muted); font-weight: 500; transition: background .2s, color .2s;
+  }
+  .paste-btn:hover { background: var(--card-2); color: var(--text); }
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    height: 52px; padding: 0 24px; border-radius: 13px; background: var(--grad); color: #fff;
+    font-weight: 700; font-size: 17px; box-shadow: var(--shadow-btn); white-space: nowrap;
+    transition: transform .15s, filter .2s;
+  }
+  .btn-primary:hover:not(:disabled) { filter: brightness(1.07); transform: translateY(-1px); }
+  .btn-primary:active:not(:disabled) { transform: translateY(0); }
+  .btn-ghost {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    height: 46px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--line-2);
+    background: var(--card); font-weight: 600; transition: border-color .2s, background .2s;
+  }
+  .btn-ghost:hover:not(:disabled) { border-color: var(--faint); background: var(--card-2); }
+
+  .spinner { width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid rgba(255,255,255,.35); border-top-color: #fff; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .platforms { display: flex; justify-content: center; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 9px; padding: 7px 16px 7px 8px; border-radius: 999px;
+    border: 1.5px solid var(--line); background: var(--card); font-size: 15px; font-weight: 500; color: var(--muted);
+    transition: border-color .2s, color .2s, background .2s, transform .2s, box-shadow .2s;
+  }
+  .pill:hover { border-color: var(--line-2); color: var(--text); }
+  .pill .tick {
+    width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; margin-left: 2px;
+    border: 1.5px solid var(--line-2); color: transparent; transition: all .2s;
+  }
+  .pill.on { border-color: var(--accent); background: var(--accent-soft); color: var(--text); font-weight: 600; box-shadow: 0 6px 18px -10px var(--accent); }
+  .pill.on .tick { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .hint { color: var(--faint); font-size: 14px; margin: 12px 0 0; min-height: 1.6em; }
+  .hint b { color: var(--muted); font-weight: 600; }
+
+  /* ---------- alert ---------- */
+  .alert {
+    display: flex; gap: 12px; align-items: flex-start; max-width: 720px; margin: 18px auto 0;
+    padding: 14px 16px; border-radius: 14px; font-size: 15px; text-align: left;
+  }
+  .alert.err { background: var(--err-soft); color: var(--err); border: 1px solid color-mix(in srgb, var(--err) 25%, transparent); }
+  .alert.info { background: var(--accent-soft); color: var(--text); border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); }
+  .alert svg { margin-top: 2px; }
+
+  /* ---------- card ---------- */
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 22px; margin-top: 34px;
+    animation: rise .35s ease both;
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+
+  /* skeleton */
+  .sk { background: linear-gradient(90deg, var(--card-2) 0%, var(--line-2) 50%, var(--card-2) 100%); background-size: 200% 100%; animation: shimmer 1.3s infinite; border-radius: 10px; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+
+  /* media */
+  .media { display: grid; grid-template-columns: 280px 1fr; gap: 22px; align-items: start; }
+  .thumb { position: relative; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; background: var(--card-2); }
+  .thumb img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb .dur, .thumb .plat { z-index: 2; }
+  .thumb .ph { position: absolute; inset: 0; display: grid; place-items: center; color: var(--faint); }
+  .thumb .dur {
+    position: absolute; right: 8px; bottom: 8px; background: rgba(0,0,0,.75); color: #fff;
+    font-size: 13px; font-weight: 600; padding: 1px 7px; border-radius: 6px; font-variant-numeric: tabular-nums;
+  }
+  .thumb .plat { position: absolute; left: 8px; top: 8px; background: rgba(0,0,0,.55); backdrop-filter: blur(6px); border-radius: 8px; padding: 4px; }
+  .media h2 {
+    font-family: var(--font-display); font-weight: 700; font-size: 21px; line-height: 1.4; margin: 2px 0 6px;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;
+  }
+  .byline { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 15px; margin-bottom: 18px; flex-wrap: wrap; }
+  .byline .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--faint); }
+
+  /* tabs */
+  .tabs { display: inline-flex; gap: 4px; padding: 4px; border-radius: 13px; background: var(--card-2); border: 1px solid var(--line); margin: 26px 0 14px; }
+  .tab { padding: 7px 18px; border-radius: 10px; font-weight: 600; color: var(--muted); font-size: 15px; transition: background .2s, color .2s; }
+  .tab.on { background: var(--card); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+  .tab small { color: var(--faint); font-weight: 500; }
+
+  /* quality rows */
+  .qlist { display: grid; gap: 8px; }
+  .qrow {
+    display: grid; grid-template-columns: 64px 1fr auto auto; align-items: center; gap: 16px;
+    padding: 12px 12px 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--card-2);
+    transition: border-color .2s, transform .2s;
+  }
+  .qrow:hover { border-color: var(--line-2); }
+  .qrow.best { border-color: color-mix(in srgb, var(--accent) 40%, transparent); background: linear-gradient(90deg, var(--accent-soft), transparent 70%), var(--card-2); }
+  .tier {
+    justify-self: start; font-family: var(--font-display); font-weight: 800; font-size: 14px; letter-spacing: .04em;
+    padding: 4px 10px; border-radius: 8px; line-height: 1.4;
+  }
+  .t-top { background: var(--grad); color: #fff; }
+  .t-2k { background: var(--t2k-bg); color: var(--t2k); }
+  .t-fhd { background: var(--tfhd-bg); color: var(--tfhd); }
+  .t-hd { background: var(--thd-bg); color: var(--thd); }
+  .t-sd { background: var(--tsd-bg); color: var(--tsd); }
+  .qtext b { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .qtext .tag { margin-left: 8px; font-size: 12px; font-weight: 700; color: var(--accent); background: var(--accent-soft); padding: 1px 8px; border-radius: 999px; vertical-align: 2px; }
+  .qtext small { display: block; color: var(--muted); font-size: 14px; line-height: 1.4; }
+  .qsize { color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .dl-btn {
+    display: inline-flex; align-items: center; gap: 7px; height: 42px; padding: 0 16px; border-radius: 11px;
+    background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 15px; white-space: nowrap;
+    transition: background .2s, color .2s, box-shadow .2s;
+  }
+  .dl-btn:hover:not(:disabled) { background: var(--grad); color: #fff; box-shadow: var(--shadow-btn); }
+  .qrow.best .dl-btn { background: var(--grad); color: #fff; box-shadow: var(--shadow-btn); }
+  .dl-btn .spinner { border-color: color-mix(in srgb, currentColor 30%, transparent); border-top-color: currentColor; width: 16px; height: 16px; }
+
+  /* progress */
+  .progress { margin-top: 22px; padding: 22px; scroll-margin-top: 24px; border-radius: 20px; border: 1px solid var(--line-2); background: var(--card-2); animation: rise .3s ease both; }
+  .p-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+  .p-head > div:first-child { min-width: 0; }
+  .p-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-weight: 700; font-size: 17px; line-height: 1.4; }
+  .p-title .tier { font-size: 13px; padding: 2px 9px; border-radius: 7px; line-height: 1.5; }
+  .p-sub { color: var(--muted); font-size: 14px; line-height: 1.45; margin-top: 3px; }
+
+  /* সবচেয়ে বড় করে: কত শতাংশ হলো আর কত MB; তার নিচে মোটা progress bar */
+  .p-main { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; margin: 20px 0 10px; }
+  .p-pct { font-weight: 800; font-size: 48px; line-height: .9; font-variant-numeric: tabular-nums; letter-spacing: -.02em; white-space: nowrap; }
+  .p-pct small { font-size: .45em; font-weight: 700; color: var(--muted); letter-spacing: 0; }
+  .p-size { color: var(--muted); font-size: 15px; line-height: 1.3; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .p-size b { color: var(--text); font-weight: 700; font-size: 18px; }
+  .p-bar { position: relative; height: 12px; border-radius: 999px; background: var(--line); overflow: hidden; }
+  .p-bar i { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: inherit; background: var(--grad); transition: width .25s linear; }
+  .p-bar i::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit;
+    background: repeating-linear-gradient(-45deg, rgba(255,255,255,.2) 0 8px, transparent 8px 16px);
+    background-size: 22.6px 22.6px; animation: stripes .9s linear infinite;
+  }
+  @keyframes stripes { to { background-position: 22.6px 0; } }
+  .progress:has(.graph.wait) .p-bar i { width: 30% !important; animation: indet 1.3s ease-in-out infinite; }
+
+  /* লাইভ স্পিড গ্রাফ: সময়ের সাথে গতি */
+  .graph { position: relative; height: 132px; margin-top: 16px; border-radius: 14px; overflow: hidden; background: var(--card); border: 1px solid var(--line); touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+  .g-grid { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--line-2); pointer-events: none; }
+  .graph > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .g-area { fill: url(#gFill); }
+  .g-fill-top { stop-color: var(--accent); stop-opacity: .34; }
+  .g-fill-bot { stop-color: var(--accent); stop-opacity: 0; }
+  .g-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .g-dot { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px var(--card); pointer-events: none; }
+  .g-dot::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid var(--accent); opacity: 0; animation: ping 1.6s ease-out infinite; }
+  @keyframes ping { 0% { transform: scale(.4); opacity: .7; } 100% { transform: scale(1.4); opacity: 0; } }
+  .g-read { position: absolute; left: 0; top: 0; padding: 12px 72px 30px 16px; pointer-events: none;
+    background: radial-gradient(farthest-side at 0 0, var(--card) 65%, color-mix(in srgb, var(--card) 0%, transparent)); }
+  .g-read .lbl { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 3px; }
+  .g-read .v { display: flex; align-items: baseline; gap: 6px; font-weight: 800; font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .g-read .v svg { align-self: center; color: var(--accent); }
+  .g-read .v span { font-size: 15px; font-weight: 700; color: var(--muted); letter-spacing: 0; }
+  .g-read small { display: block; margin-top: 5px; font-size: 13px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  .g-x { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line-2); pointer-events: none; }
+  .g-tip { position: absolute; top: 8px; transform: translateX(-50%); padding: 3px 9px; border-radius: 8px; white-space: nowrap; pointer-events: none;
+    background: var(--text); color: var(--bg); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  /* সার্ভারের সাথে সংযোগ হওয়ার সময় (এখনো কিছু আসেনি) */
+  .graph.wait .g-read, .graph.wait .g-dot, .graph.wait > svg { display: none; }
+  .g-wait { position: absolute; inset: 0; display: none; place-items: center; color: var(--muted); font-size: 15px; font-weight: 600; }
+  .graph.wait .g-wait { display: grid; }
+  .graph.wait::before { content: ""; position: absolute; inset: 0; width: 40%; background: linear-gradient(90deg, transparent, var(--accent-soft), transparent); animation: sweep 1.4s ease-in-out infinite; }
+  @keyframes sweep { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+  @keyframes indet { from { left: -30%; } to { left: 100%; } }
+
+  .p-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .stat { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); min-width: 0; }
+  .stat > div { min-width: 0; }
+  .stat .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex-shrink: 0; background: var(--accent-soft); color: var(--accent); }
+  .stat small { display: block; color: var(--muted); font-size: 13px; line-height: 1.3; }
+  .stat b { display: block; font-size: 17px; font-weight: 700; line-height: 1.35; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* অ্যাপ বন্ধ করলেও ডাউনলোড চলবে — এই ভরসাটা চোখের সামনে রাখি */
+  .p-safe { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; padding: 11px 14px; border-radius: 12px; background: var(--ok-soft); border: 1px solid color-mix(in srgb, var(--ok) 22%, transparent); }
+  .p-safe > svg { color: var(--ok); margin-top: 2px; }
+  .p-safe b { display: block; font-size: 15px; font-weight: 600; line-height: 1.4; }
+  .p-safe .note { display: block; font-size: 13.5px; color: var(--muted); line-height: 1.45; }
+  kbd {
+    font: inherit; font-size: 12px; font-weight: 600; padding: 0 6px; border-radius: 6px;
+    border: 1px solid var(--line-2); background: var(--card); color: var(--text);
+  }
+  .qtext .conv { color: var(--faint); }
+  .cancel-btn { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; height: 38px; color: var(--muted); font-size: 14px; font-weight: 600; padding: 0 13px; border-radius: 10px; border: 1px solid var(--line-2); }
+  .cancel-btn:hover { color: var(--err); background: var(--err-soft); border-color: transparent; }
+
+  /* done */
+  .done { margin-top: 22px; padding: 26px 22px; scroll-margin-top: 24px; border-radius: 16px; text-align: center; background: var(--ok-soft); border: 1px solid color-mix(in srgb, var(--ok) 28%, transparent); animation: rise .3s ease both; }
+  .check { width: 58px; height: 58px; margin: 0 auto 12px; border-radius: 50%; background: var(--ok); display: grid; place-items: center; color: #fff; animation: pop .45s cubic-bezier(.2, 1.6, .4, 1) both; }
+  @keyframes pop { from { transform: scale(.3); opacity: 0; } }
+  .done h3 { font-family: var(--font-display); font-size: 22px; margin: 0 0 4px; }
+  .done p { color: var(--muted); margin: 0 0 16px; }
+  .d-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; margin: 2px 0 12px; font-size: 15px; font-variant-numeric: tabular-nums; }
+  .d-stats span { display: inline-flex; align-items: center; gap: 6px; }
+  .d-stats b { font-weight: 700; }
+  .d-stats svg { color: var(--ok); }
+  .file-chip {
+    display: inline-flex; align-items: center; gap: 10px; max-width: 100%; padding: 9px 14px; border-radius: 12px;
+    background: var(--card); border: 1px solid var(--line); margin-bottom: 18px; font-size: 14px; text-align: left;
+  }
+  .file-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-chip small { color: var(--muted); white-space: nowrap; }
+  .done .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .done .btn-primary { height: 46px; font-size: 16px; padding: 0 20px; }
+
+  /* ---------- features / steps ---------- */
+  section.info { margin-top: 80px; }
+  .sec-title { font-family: var(--font-display); font-weight: 700; font-size: 26px; text-align: center; margin: 0 0 6px; }
+  .sec-sub { text-align: center; color: var(--muted); margin: 0 0 28px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .feat { padding: 22px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); }
+  .feat .ic { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); margin-bottom: 14px; }
+  .feat h4 { font-size: 17px; margin: 0 0 4px; font-weight: 700; }
+  .feat p { color: var(--muted); font-size: 15px; margin: 0; line-height: 1.6; }
+  .howto { counter-reset: s; }
+  .howto .feat { position: relative; }
+  .howto .num { font-family: var(--font-display); font-weight: 800; font-size: 15px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--grad); color: #fff; margin-bottom: 14px; }
+
+  footer { margin: 70px 0 34px; padding-top: 22px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--faint); font-size: 14px; }
+
+  /* ---------- responsive ---------- */
+  .qtext small .sz { display: none; }
+  @media (max-width: 720px) {
+    .media { grid-template-columns: 1fr; gap: 16px; }
+    .grid3 { grid-template-columns: 1fr; }
+    .hero { padding-top: 24px; }
+  }
+  @media (max-width: 560px) {
+    .search { flex-wrap: wrap; padding: 8px; }
+    .search > svg { display: none; }
+    .search input { flex-basis: 100%; padding: 10px; }
+    .paste-btn { flex: 1; justify-content: center; background: var(--card-2); }
+    .search .btn-primary { flex: 2; }
+    .qrow { grid-template-columns: auto 1fr auto; gap: 12px; }
+    .qsize { display: none; }
+    .qtext small .sz { display: inline; }
+    .dl-btn span { display: none; }
+    .dl-btn { width: 46px; justify-content: center; padding: 0; }
+    .card { padding: 16px; }
+    .wrap { padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
+
+    .progress { padding: 16px; border-radius: 16px; margin-top: 18px; }
+    .p-title { font-size: 16px; }
+    .p-sub { font-size: 13px; }
+    .cancel-btn { height: 34px; padding: 0 11px; }
+    .p-main { margin-top: 16px; }
+    .p-pct { font-size: 40px; }
+    .p-size { font-size: 13px; }
+    .p-size b { font-size: 15px; }
+    .p-bar { height: 10px; }
+    .graph { height: 112px; margin-top: 12px; }
+    .g-read { padding: 10px 56px 26px 12px; }
+    .g-read .v { font-size: 26px; }
+    .p-stats { gap: 6px; }
+    .stat { padding: 8px 10px; border-radius: 10px; }
+    .stat .ic { display: none; }
+    .stat small { font-size: 12px; }
+    .stat b { font-size: 15px; }
+    .p-safe { padding: 10px 12px; }
+    .p-safe b { font-size: 14px; }
+    .p-safe .note { font-size: 12.5px; }
+    .kbd-hint { display: none; }
+    .d-stats { font-size: 14px; gap: 4px 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <div class="brand">
+      <span class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg></span>
+      ভিডিও ডাউনলোডার
+    </div>
+    <button class="icon-btn" id="themeBtn" aria-label="থিম বদলান" title="লাইট / ডার্ক">
+      <svg class="sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></svg>
+      <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>
+    </button>
+  </nav>
+
+  <!-- ===== hero + search ===== -->
+  <header class="hero">
+    <div class="eyebrow"><i></i>4K · 2K · 1080p · MP3</div>
+    <h1>যেকোনো ভিডিও নামান<br><span class="grad-text">সর্বোচ্চ কোয়ালিটিতে</span></h1>
+    <p class="lead">YouTube, Facebook বা Instagram ভিডিওর লিংক পেস্ট করুন। ভিডিওটা যত ভালো কোয়ালিটিতে আছে, ঠিক ততটাই পাবেন।</p>
+
+    <form class="search" id="form" autocomplete="off">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+      <input id="url" type="url" inputmode="url" placeholder="ভিডিওর লিংক এখানে পেস্ট করুন…" required aria-label="ভিডিও লিংক">
+      <button type="button" class="paste-btn" id="pasteBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="4" rx="1.2"/><path d="M16 5h1.5A2.5 2.5 0 0 1 20 7.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-11A2.5 2.5 0 0 1 6.5 5H8"/></svg>
+        পেস্ট
+      </button>
+      <button type="submit" class="btn-primary" id="goBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>
+        <span>ডাউনলোড</span>
+      </button>
+    </form>
+
+    <div class="platforms" role="radiogroup" aria-label="প্ল্যাটফর্ম বেছে নিন">
+      <button type="button" class="pill" role="radio" aria-checked="false" data-p="YouTube"><svg width="24" height="24" viewBox="0 0 24 24"><rect x="1" y="4.5" width="22" height="15" rx="4.5" fill="#FF0033"/><path d="M10 8.8v6.4l5.6-3.2z" fill="#fff"/></svg>YouTube<span class="tick"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></button>
+      <button type="button" class="pill" role="radio" aria-checked="false" data-p="Facebook"><svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1877F2"/><path d="M13.3 20v-6.6h2.2l.35-2.6h-2.55V9.2c0-.75.22-1.27 1.3-1.27h1.35V5.6a18 18 0 0 0-1.98-.1c-1.96 0-3.3 1.2-3.3 3.4v1.9H8.5v2.6h2.17V20z" fill="#fff"/></svg>Facebook<span class="tick"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></button>
+      <button type="button" class="pill" role="radio" aria-checked="false" data-p="Instagram"><svg width="24" height="24" viewBox="0 0 24 24"><defs><linearGradient id="igPill" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".35" stop-color="#FA7E1E"/><stop offset=".62" stop-color="#D62976"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="1.5" y="1.5" width="21" height="21" rx="6.5" fill="url(#igPill)"/><rect x="6.2" y="6.2" width="11.6" height="11.6" rx="3.6" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="15.9" cy="8.1" r="1" fill="#fff"/></svg>Instagram<span class="tick"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></button>
+    </div>
+    <p class="hint" id="hint"></p>
+
+    <div id="alert" class="alert" hidden></div>
+  </header>
+
+  <!-- ===== loading skeleton ===== -->
+  <section class="card" id="loading" hidden aria-label="লোড হচ্ছে">
+    <div class="media">
+      <div class="sk" style="aspect-ratio:16/9;border-radius:14px"></div>
+      <div>
+        <div class="sk" style="height:22px;width:90%;margin:4px 0 10px"></div>
+        <div class="sk" style="height:22px;width:60%;margin-bottom:16px"></div>
+        <div class="sk" style="height:14px;width:40%"></div>
+      </div>
+    </div>
+    <div style="display:grid;gap:8px;margin-top:28px">
+      <div class="sk" style="height:66px;border-radius:14px"></div>
+      <div class="sk" style="height:66px;border-radius:14px"></div>
+      <div class="sk" style="height:66px;border-radius:14px"></div>
+    </div>
+  </section>
+
+  <!-- ===== result ===== -->
+  <section class="card" id="result" hidden>
+    <div class="media">
+      <div class="thumb">
+        <div class="ph"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="4.5" width="19" height="15" rx="3"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></svg></div>
+        <img id="thumb" alt="" hidden>
+        <span class="plat" id="platIcon"></span>
+        <span class="dur" id="dur" hidden></span>
+      </div>
+      <div>
+        <h2 id="title"></h2>
+        <div class="byline" id="byline"></div>
+        <button class="btn-primary" id="bestBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>
+          <span id="bestLabel">সেরা কোয়ালিটিতে ডাউনলোড</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- progress -->
+    <div class="progress" id="progress" hidden>
+      <div class="p-head">
+        <div>
+          <div class="p-title"><span class="tier" id="pTier" hidden></span><span id="pTitle">ডাউনলোড শুরু হচ্ছে…</span></div>
+          <div class="p-sub" id="pSub">একটু অপেক্ষা করুন</div>
+        </div>
+        <button class="cancel-btn" id="cancelBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>বাতিল
+        </button>
+      </div>
+
+      <!-- কত শতাংশ, কত MB, আর মোটা progress bar -->
+      <div class="p-main">
+        <div class="p-pct" id="pPct"></div>
+        <div class="p-size" id="sDone"></div>
+      </div>
+      <div class="p-bar" role="progressbar" aria-label="ডাউনলোডের অগ্রগতি"><i id="gBar"></i></div>
+
+      <!-- এখনকার গতি আর গতির গ্রাফ -->
+      <div class="graph wait" id="graph" role="img" aria-label="ডাউনলোডের গতির গ্রাফ">
+        <i class="g-grid" style="top:33%"></i><i class="g-grid" style="top:66%"></i>
+        <svg id="gSvg" aria-hidden="true">
+          <defs><linearGradient id="gFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="g-fill-top"/><stop offset="1" class="g-fill-bot"/></linearGradient></defs>
+          <path class="g-area" id="gArea"/><path class="g-line" id="gLine"/>
+        </svg>
+        <div class="g-read">
+          <span class="lbl">এখনকার গতি</span>
+          <div class="v"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><b id="gSpeed">0.0</b><span id="gUnit">MB/s</span></div>
+          <small id="gMbps"></small>
+        </div>
+        <i class="g-dot" id="gDot"></i>
+        <i class="g-x" id="gX" hidden></i><span class="g-tip" id="gTip" hidden></span>
+        <div class="g-wait">ভিডিওর সার্ভারের সাথে সংযোগ হচ্ছে…</div>
+      </div>
+
+      <div class="p-stats">
+        <div class="stat">
+          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div><small>বাকি সময়</small><b id="sEta">—</b></div>
+        </div>
+        <div class="stat">
+          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg></span>
+          <div><small>গড় গতি</small><b id="sAvg">—</b></div>
+        </div>
+        <div class="stat">
+          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></span>
+          <div><small>সর্বোচ্চ গতি</small><b id="sPeak">—</b></div>
+        </div>
+      </div>
+
+      <div class="p-safe">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 4.5 5.5v6c0 4.6 3.2 8.6 7.5 10 4.3-1.4 7.5-5.4 7.5-10v-6z"/><path d="m8.8 12 2.2 2.2 4.4-4.4"/></svg>
+        <div>
+          <b>অ্যাপ বা ব্রাউজার বন্ধ করলেও ডাউনলোড চলতে থাকবে</b>
+          <span class="note" id="pNote">ফাইলটা ব্রাউজারের ডাউনলোড তালিকায় দেখতে পাবেন<span class="kbd-hint"> (<kbd>Ctrl</kbd> + <kbd>J</kbd>)</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- done -->
+    <div class="done" id="done" hidden>
+      <div class="check"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
+      <h3>ডাউনলোড সম্পূর্ণ!</h3>
+      <div class="d-stats" id="dStats"></div>
+      <p id="doneWhere">ফাইলটি আপনার কম্পিউটারের <b>Downloads</b> ফোল্ডারে সেভ হয়েছে।</p>
+      <div class="file-chip">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M14 2.5H7A2.5 2.5 0 0 0 4.5 5v14A2.5 2.5 0 0 0 7 21.5h10a2.5 2.5 0 0 0 2.5-2.5V8z"/><path d="M14 2.5V8h5.5"/></svg>
+        <span id="fileName"></span><small id="fileSize"></small>
+      </div>
+      <div class="actions">
+        <button class="btn-ghost" id="redoBtn" title="ব্রাউজারে ডাউনলোড আটকে গেলে এখানে চাপুন, আবার নামাতে হবে না">আবার সেভ করুন</button>
+        <button class="btn-primary" id="againBtn">নতুন ভিডিও</button>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab on" data-tab="video" role="tab">ভিডিও <small>MP4</small></button>
+      <button class="tab" data-tab="audio" role="tab">শুধু অডিও <small>MP3</small></button>
+    </div>
+    <div class="qlist" id="videoList"></div>
+    <div class="qlist" id="audioList" hidden></div>
+  </section>
+
+  <!-- ===== features ===== -->
+  <section class="info">
+    <h2 class="sec-title">কেন এই ডাউনলোডার?</h2>
+    <p class="sec-sub">কোনো বিজ্ঞাপন নেই, কোনো লিমিট নেই, কোয়ালিটিও কমানো হয় না</p>
+    <div class="grid3">
+      <div class="feat">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="13" rx="2.5"/><path d="M8 21h8M12 17.5V21"/><path d="M7 9v4m0-2h3m0-2v4M14 9v4h1.3a2 2 0 0 0 0-4z"/></svg></div>
+        <h4>4K, 8K পর্যন্ত</h4>
+        <p>ভিডিও যে সর্বোচ্চ রেজুলেশনে আপলোড হয়েছে, ঠিক সেটাতেই নামবে।</p>
+      </div>
+      <div class="feat">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4M7 7v10M11 4v16M15 8v8M19 11v2"/></svg></div>
+        <h4>ছবি আর শব্দ একসাথে</h4>
+        <p>বড় রেজুলেশনে ছবি আর শব্দ আলাদা থাকে। অ্যাপটা নিজেই জোড়া লাগিয়ে একটা MP4 বানায়।</p>
+      </div>
+      <div class="feat">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></div>
+        <h4>MP3 অডিও</h4>
+        <p>গান বা পডকাস্ট শুধু শব্দ হিসেবে চাইলে 320kbps MP3 নামান।</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="info">
+    <h2 class="sec-title">কীভাবে নামাবেন</h2>
+    <p class="sec-sub">মাত্র তিনটা ধাপ</p>
+    <div class="grid3 howto">
+      <div class="feat"><div class="num">১</div><h4>লিংক কপি করুন</h4><p>ভিডিওর <b>Share</b> বাটনে চাপ দিয়ে <b>Copy link</b> করুন।</p></div>
+      <div class="feat"><div class="num">২</div><h4>পেস্ট করে ডাউনলোড চাপুন</h4><p>উপরের বক্সে লিংকটা পেস্ট করুন। ভিডিওর সব কোয়ালিটি দেখাবে।</p></div>
+      <div class="feat"><div class="num">৩</div><h4>রেজুলেশন বেছে নিন</h4><p>যে রেজুলেশন চান তার পাশের ডাউনলোড বাটনে চাপুন। সাথে সাথে ব্রাউজারে ডাউনলোড শুরু হবে।</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>শুধু নিজের ভিডিও বা যেগুলো নামানোর অনুমতি আছে, সেগুলোই নামান।</span>
+    <span>আপনার কম্পিউটারেই চলছে</span>
+  </footer>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const S = { info: null, jobId: null, timer: null, mode: "video", label: "", row: null, busy: false };
+let igN = 0;
+
+const ICON = {
+  dl: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>',
+  err: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.5v5.5M12 16.5v.01"/></svg>',
+  info: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v5.5M12 7.5v.01"/></svg>',
+  user: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+  speed: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>',
+  clock: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  box: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>',
+  check: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+};
+function platIcon(p, size = 22) {
+  if (p === "YouTube") return `<svg width="${size}" height="${size}" viewBox="0 0 24 24"><rect x="1" y="4.5" width="22" height="15" rx="4.5" fill="#FF0033"/><path d="M10 8.8v6.4l5.6-3.2z" fill="#fff"/></svg>`;
+  if (p === "Facebook") return `<svg width="${size}" height="${size}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1877F2"/><path d="M13.3 20v-6.6h2.2l.35-2.6h-2.55V9.2c0-.75.22-1.27 1.3-1.27h1.35V5.6a18 18 0 0 0-1.98-.1c-1.96 0-3.3 1.2-3.3 3.4v1.9H8.5v2.6h2.17V20z" fill="#fff"/></svg>`;
+  if (p === "Instagram") { const id = "ig" + (++igN); return `<svg width="${size}" height="${size}" viewBox="0 0 24 24"><defs><linearGradient id="${id}" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".35" stop-color="#FA7E1E"/><stop offset=".62" stop-color="#D62976"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="1.5" y="1.5" width="21" height="21" rx="6.5" fill="url(#${id})"/><rect x="6.2" y="6.2" width="11.6" height="11.6" rx="3.6" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="15.9" cy="8.1" r="1" fill="#fff"/></svg>`; }
+  return "";
+}
+
+// ---------- helpers ----------
+const bn = (n) => String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[d]);
+function tier(p) {
+  if (p >= 4320) return { b: "8K", c: "t-top", n: "আল্ট্রা HD" };
+  if (p >= 2160) return { b: "4K", c: "t-top", n: "আল্ট্রা HD" };
+  if (p >= 1440) return { b: "2K", c: "t-2k", n: "কোয়াড HD" };
+  if (p >= 1080) return { b: "FHD", c: "t-fhd", n: "ফুল HD" };
+  if (p >= 720) return { b: "HD", c: "t-hd", n: "HD" };
+  return { b: "SD", c: "t-sd", n: "সাধারণ কোয়ালিটি" };
+}
+function fmtDur(s) {
+  if (!s) return "";
+  s = Math.round(s); const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60;
+  return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0");
+}
+function alertMsg(text, kind = "err") {
+  const a = $("#alert");
+  if (!text) { a.hidden = true; return; }
+  a.className = "alert " + kind; a.hidden = false;
+  a.innerHTML = (kind === "err" ? ICON.err : ICON.info) + "<span></span>";
+  a.querySelector("span").textContent = text;
+}
+function detectPlatform(u) {
+  u = u.toLowerCase();
+  if (/youtu\.?be/.test(u)) return "YouTube";
+  if (/instagram\.com/.test(u)) return "Instagram";
+  if (/facebook\.com|fb\.watch|fb\.com/.test(u)) return "Facebook";
+  return null;
+}
+const isUrl = (s) => /^https?:\/\/\S+$/i.test(s.trim());
+
+// ---------- theme ----------
+$("#themeBtn").onclick = () => {
+  const t = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = t; localStorage.setItem("theme", t);
+  $('meta[name="theme-color"]').content = t === "light" ? "#f8f6f3" : "#0c0d11";
+};
+
+// ---------- ফোন না কম্পিউটার ----------
+// ফোনে Ctrl+J, Ctrl+V এসব নেই, তাই লেখাগুলো ফোনের মতো করে দেখাই
+const IS_PHONE = matchMedia("(pointer: coarse)").matches;
+if (IS_PHONE) {
+  $("#pNote").textContent = "ফাইলটা ফোনের নোটিফিকেশনে বা ব্রাউজারের Downloads-এ দেখতে পাবেন";
+  $("#doneWhere").innerHTML = "ফাইলটি আপনার ফোনের <b>Downloads</b>-এ সেভ হয়েছে।";
+}
+
+// ---------- platform (YouTube / Facebook / Instagram) ----------
+const urlIn = $("#url");
+const PLAT = {
+  YouTube: { ph: "YouTube ভিডিওর লিংক এখানে পেস্ট করুন…", hint: "YouTube-এ ভিডিওর নিচে <b>Share</b> → <b>Copy link</b> চাপুন" },
+  Facebook: { ph: "Facebook ভিডিওর লিংক এখানে পেস্ট করুন…", hint: "Facebook-এ ভিডিওর <b>Share</b> → <b>Copy link</b> চাপুন" },
+  Instagram: { ph: "Instagram রিল বা ভিডিওর লিংক এখানে পেস্ট করুন…", hint: "Instagram-এ রিলের <b>Share</b> (কাগজের প্লেন) → <b>Copy link</b> চাপুন" },
+};
+function selectPlatform(p, save = true) {
+  if (!PLAT[p]) return;
+  document.querySelectorAll(".pill").forEach((el) => {
+    const on = el.dataset.p === p;
+    el.classList.toggle("on", on); el.setAttribute("aria-checked", on);
+  });
+  urlIn.placeholder = PLAT[p].ph;
+  $("#hint").innerHTML = PLAT[p].hint;
+  if (save) localStorage.setItem("platform", p);
+}
+// শুরুতে আগে থেকে একটা বাছাই করা থাকে (শেষবার যেটা ছিল, না থাকলে YouTube)
+selectPlatform(localStorage.getItem("platform") || "YouTube", false);
+document.querySelectorAll(".pill").forEach((el) => (el.onclick = () => { selectPlatform(el.dataset.p); urlIn.focus(); }));
+
+// লিংক দিলে কোন সাইটের, সেটা নিজে থেকেই বাছাই হয়ে যায়
+function autoPlatform() { const p = detectPlatform(urlIn.value); if (p) selectPlatform(p); }
+urlIn.addEventListener("input", autoPlatform);
+urlIn.addEventListener("paste", () => setTimeout(() => { autoPlatform(); if (isUrl(urlIn.value) && !S.busy) $("#form").requestSubmit(); }, 0));
+$("#pasteBtn").onclick = async () => {
+  try {
+    const t = (await navigator.clipboard.readText()).trim();
+    urlIn.value = t; autoPlatform();
+    if (isUrl(t)) $("#form").requestSubmit(); else urlIn.focus();
+  } catch {
+    // ফোনে WiFi-র ঠিকানা (http://192.168…) দিয়ে খুললে ব্রাউজার নিজে থেকে পেস্ট করতে দেয় না
+    urlIn.focus();
+    alertMsg(IS_PHONE ? "বক্সে কিছুক্ষণ চেপে ধরে রাখুন, তারপর Paste চাপুন।" : "বক্সে ক্লিক করে Ctrl+V চাপুন।", "info");
+  }
+};
+
+// ---------- fetch info ----------
+function setGoBusy(b) {
+  const g = $("#goBtn"); g.disabled = b;
+  g.innerHTML = b ? '<span class="spinner"></span><span>খুঁজছি…</span>' : ICON.dl.replace('width="18" height="18"', 'width="20" height="20"') + "<span>ডাউনলোড</span>";
+}
+$("#form").onsubmit = async (e) => {
+  e.preventDefault();
+  if (S.busy) return;
+  const url = urlIn.value.trim();
+  if (!isUrl(url)) { alertMsg("সঠিক ভিডিও লিংক দিন। লিংকটা https:// দিয়ে শুরু হয়।"); return; }
+  autoPlatform();
+  alertMsg(null); resetJob(); $("#result").hidden = true; $("#loading").hidden = false; setGoBusy(true);
+  try {
+    const r = await fetch("/api/info", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || "সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+    S.info = d; render(d);
+  } catch (err) {
+    alertMsg(err.message === "Failed to fetch" ? "অ্যাপের সাথে সংযোগ হচ্ছে না। কালো উইন্ডোটা (start.bat) চালু আছে তো?" : err.message);
+  } finally { $("#loading").hidden = true; setGoBusy(false); }
+};
+
+// ---------- render ----------
+function render(d) {
+  selectPlatform(d.platform, false);
+  const img = $("#thumb");
+  img.hidden = true; img.onload = () => (img.hidden = false); img.onerror = () => (img.hidden = true);
+  if (d.thumbnail) img.src = d.thumbnail; else img.removeAttribute("src");
+  $("#platIcon").innerHTML = platIcon(d.platform); $("#platIcon").hidden = !$("#platIcon").innerHTML;
+  $("#dur").textContent = fmtDur(d.duration); $("#dur").hidden = !d.duration;
+  $("#title").textContent = d.title;
+
+  const by = $("#byline"); by.innerHTML = "";
+  const bits = [d.uploader, d.platform].filter(Boolean);
+  bits.forEach((t, i) => {
+    if (i) { const dot = document.createElement("span"); dot.className = "dot"; by.appendChild(dot); }
+    const s = document.createElement("span"); s.style.cssText = "display:inline-flex;align-items:center;gap:6px";
+    s.innerHTML = i === 0 && d.uploader ? ICON.user : ""; s.append(t); by.appendChild(s);
+  });
+
+  const qs = d.qualities.length ? d.qualities : [{ height: null, p: null, fps: null, size: null, scale: null }];
+  const top = qs[0];
+  $("#bestLabel").textContent = top.p ? `সেরা কোয়ালিটিতে ডাউনলোড · ${tier(top.p).b}` : "সেরা কোয়ালিটিতে ডাউনলোড";
+
+  const vl = $("#videoList"); vl.innerHTML = "";
+  qs.forEach((q, i) => vl.appendChild(makeRow({
+    badge: q.p ? tier(q.p) : { b: "MP4", c: "t-hd", n: "যা পাওয়া যায়" },
+    main: q.p ? q.p + "p" : "সেরা কোয়ালিটি",
+    sub: [q.p ? tier(q.p).n : "যা পাওয়া যায়", q.fps && q.fps > 30 ? Math.round(q.fps) + "fps" : null],
+    conv: q.scale ? "বড়টা থেকে ছোট করে বানানো" : null,
+    size: q.size, best: i === 0,
+    opts: { mode: "video", height: q.height, scale: q.scale }, label: q.p ? `${q.p}p (${tier(q.p).b})` : "ভিডিও",
+  })));
+
+  const al = $("#audioList"); al.innerHTML = "";
+  al.appendChild(makeRow({
+    badge: { b: "MP3", c: "t-2k" }, main: "MP3 অডিও", sub: ["320kbps · গান/পডকাস্টের জন্য"],
+    size: d.audio_size, best: false, opts: { mode: "audio" }, label: "MP3 অডিও",
+  }));
+
+  setTab("video");
+  $("#result").hidden = false;
+  $("#result").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function makeRow(o) {
+  const row = document.createElement("div");
+  row.className = "qrow" + (o.best ? " best" : "");
+  const sub = o.sub.filter(Boolean).join(" · ");
+  row.innerHTML = `<span class="tier ${o.badge.c}"></span>
+    <div class="qtext"><b></b>${o.best ? '<span class="tag">সেরা</span>' : ""}<small><span class="s"></span><span class="conv"></span><span class="sz"></span></small></div>
+    <span class="qsize"></span>
+    <button class="dl-btn">${ICON.dl}<span>ডাউনলোড</span></button>`;
+  row.querySelector(".tier").textContent = o.badge.b;
+  row.querySelector("b").textContent = o.main;
+  row.querySelector(".s").textContent = sub;
+  row.querySelector(".conv").textContent = o.conv ? " · " + o.conv : "";
+  row.querySelector(".sz").textContent = o.size ? " · ~" + o.size : "";
+  row.querySelector(".qsize").textContent = o.size ? "~" + o.size : "";
+  row.querySelector("button").onclick = () => startDownload(o.opts, o.label, row);
+  return row;
+}
+
+function setTab(t) {
+  document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("on", b.dataset.tab === t));
+  $("#videoList").hidden = t !== "video"; $("#audioList").hidden = t !== "audio";
+}
+document.querySelectorAll(".tab").forEach((b) => (b.onclick = () => setTab(b.dataset.tab)));
+$("#bestBtn").onclick = () => { setTab("video"); $("#videoList .dl-btn").click(); };
+
+// ---------- download ----------
+function setBusy(b, row) {
+  S.busy = b;
+  document.querySelectorAll(".dl-btn, #bestBtn, .tab").forEach((x) => (x.disabled = b));
+  $("#goBtn").disabled = b;
+  document.querySelectorAll(".dl-btn").forEach((x) => {
+    if (b && row && row.contains(x)) x.innerHTML = '<span class="spinner"></span><span>চলছে…</span>';
+    else x.innerHTML = ICON.dl + "<span>ডাউনলোড</span>";
+  });
+}
+function resetJob() {
+  clearInterval(S.timer); S.jobId = null; gStop(); forgetJob();
+  $("#progress").hidden = true; $("#done").hidden = true;
+  setBusy(false);
+}
+
+function saveFile(href) {
+  const a = document.createElement("a");
+  a.href = href; a.download = "";
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+// ---------- লাইভ স্পিড গ্রাফ আর সংখ্যা ----------
+// সার্ভার থেকে আধা সেকেন্ড পরপর মোট বাইট আসে। মাঝের সময়টায় গতি দিয়ে আন্দাজ করে সংখ্যাগুলো
+// প্রতি ফ্রেমে বাড়াই, তাই % আর MB থেমে থেমে না বেড়ে টানা বাড়তে থাকে (কপি করার সময়ের মতো)।
+const MB = 1048576;
+function fmtBytes(n) {
+  if (!n) return "0 MB";
+  if (n < MB) return Math.round(n / 1024) + " KB";
+  if (n < 1024 * MB) return (n / MB).toFixed(1) + " MB";
+  return (n / 1024 / MB).toFixed(2) + " GB";
+}
+function fmtSpeed(bps) { return bps >= MB ? [(bps / MB).toFixed(1), "MB/s"] : [String(Math.round(bps / 1024)), "KB/s"]; }
+function fmtShort(s) {
+  s = Math.max(0, Math.round(s));
+  if (s < 60) return s + " সেকেন্ড";
+  if (s < 3600) return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0") + " মিনিট";
+  return Math.floor(s / 3600) + " ঘণ্টা " + Math.floor((s % 3600) / 60) + " মি";
+}
+function fmtTook(s) {
+  s = Math.max(1, Math.round(s));
+  return s < 60 ? `${s} সেকেন্ডে` : `${Math.floor(s / 60)} মিনিট ${s % 60} সেকেন্ডে`;
+}
+
+const G = { raf: 0 };
+function gReset() {
+  cancelAnimationFrame(G.raf);
+  Object.assign(G, { raf: 0, t0: 0, last: null, speed: 0, shown: 0, shownSpeed: 0, est: 0, peak: 0, max: 0,
+                     samples: [], etaAt: -1e9, prevFrame: 0, hoverX: null, finalT: 0 });
+  $("#graph").classList.add("wait");
+  $("#gBar").style.width = ""; $("#pPct").innerHTML = "";
+  $("#gX").hidden = true; $("#gTip").hidden = true;
+  $("#sDone").innerHTML = ""; $("#sEta").textContent = "—"; $("#sPeak").textContent = "—"; $("#sAvg").textContent = "—";
+}
+function gFeed(bytes, est, now = performance.now()) {
+  const L = G.last;
+  let measured = false;
+  if (L && now - L.t > 80 && bytes >= L.bytes) {
+    const inst = (bytes - L.bytes) / ((now - L.t) / 1000);
+    if (!G.samples.length) G.shownSpeed = inst;  // প্রথমবার শূন্য থেকে ধীরে না উঠে সরাসরি আসল গতি
+    // ভিডিও টুকরো টুকরো আসে, তাই গতি একটু মসৃণ করে দেখাই (সংখ্যা আর গ্রাফ যেন লাফালাফি না করে)
+    G.speed = G.samples.length ? G.speed * 0.7 + inst * 0.3 : inst;
+    measured = true;
+  }
+  if (bytes > 0 && !G.t0) G.t0 = L ? L.t : now;  // প্রথম বাইট কখন এলো
+  if (!L && bytes > 0) G.shown = bytes;  // পেজ রিলোডের পর: যতটা নেমেছে সেখান থেকেই শুরু
+  G.last = { t: now, bytes };
+  if (est) G.est = est;
+  // গতি মাপা যায় দুটো খবরের তুলনা করে; তার আগে গ্রাফে মিথ্যা "০" বিন্দু বসাই না
+  if (G.t0 && (measured || G.samples.length)) {
+    G.samples.push([(now - G.t0) / 1000, G.speed]);
+    if (G.samples.length > 360) G.samples = G.samples.filter((_, i) => i % 2 === 0 || i === G.samples.length - 1);
+    G.peak = Math.max(G.peak, G.speed);
+    $("#graph").classList.remove("wait");
+  }
+  if (!G.raf) G.raf = requestAnimationFrame(gFrame);
+}
+function gStop() { cancelAnimationFrame(G.raf); G.raf = 0; }
+
+function gFrame(now) {
+  G.raf = requestAnimationFrame(gFrame);
+  const dt = G.prevFrame ? Math.min((now - G.prevFrame) / 1000, 0.1) : 0.016;
+  G.prevFrame = now;
+  const L = G.last;
+  if (!L || !G.t0 || !G.samples.length) return;
+  const k = 1 - Math.exp(-dt * 9);
+  // শেষ খবরের পর গতি অনুযায়ী আন্দাজ, তবে এক সেকেন্ডের বেশি আগে না, আর আনুমানিক মোটের বেশি না
+  let target = L.bytes + G.speed * Math.min((now - L.t) / 1000, 0.8);
+  if (G.est) target = Math.max(L.bytes, Math.min(target, G.est * 0.995));
+  if (target > G.shown) G.shown += (target - G.shown) * k;
+  G.shownSpeed += (G.speed - G.shownSpeed) * (1 - Math.exp(-dt * 4));
+  G.max = G.max ? G.max + (G.peak * 1.25 - G.max) * k : G.peak * 1.25;
+
+  const pct = G.est ? Math.min(99.9, (G.shown / G.est) * 100) : null;
+  if (pct != null) {
+    const [a, b] = pct.toFixed(1).split(".");
+    $("#pPct").innerHTML = `${a}<small>.${b}%</small>`;
+    $("#gBar").style.width = pct + "%";
+  }
+  const [sv, su] = fmtSpeed(G.shownSpeed);
+  $("#gSpeed").textContent = sv; $("#gUnit").textContent = su;
+  // ইন্টারনেট প্যাকেজ সাধারণত Mbps-এ বলা থাকে, তাই সেটাও দেখাই
+  $("#gMbps").textContent = "≈ " + Math.round(G.shownSpeed * 8 / 1e6) + " Mbps";
+  const showTotal = G.est && G.shown < G.est;
+  $("#sDone").innerHTML = `<b>${fmtBytes(G.shown)}</b>` + (showTotal ? ` / ~${fmtBytes(G.est)}` : "");
+  $("#sPeak").textContent = fmtSpeed(G.peak).join(" ");
+  const secs = (now - G.t0) / 1000;
+  if (secs > 1) $("#sAvg").textContent = fmtSpeed(G.shown / secs).join(" ");
+  if (now - G.etaAt > 1000) {  // বাকি সময় সেকেন্ডে একবার বদলায়, যাতে লাফালাফি না করে
+    G.etaAt = now;
+    $("#sEta").textContent = !G.est || G.speed < 1024 ? "—"
+      : G.shown >= G.est * 0.99 ? "প্রায় শেষ" : fmtShort((G.est - G.shown) / G.speed);
+  }
+  gDraw(now);
+}
+
+function gDraw(now) {
+  const el = $("#graph"), w = el.clientWidth, h = el.clientHeight;
+  if (!w) return;
+  $("#gSvg").setAttribute("viewBox", `0 0 ${w} ${h}`);
+  const tNow = G.finalT || Math.max((now - G.t0) / 1000, 0.5);
+  const pts = G.samples.filter((p) => p[0] < tNow).concat([[tNow, G.shownSpeed]]);
+  if (pts[0][0] > 0) pts.unshift([0, pts[0][1]]);
+  const top = 22, bottom = h - 9, right = w - 12;
+  const X = (t) => (t / tNow) * right, Y = (s) => bottom - (G.max ? s / G.max : 0) * (bottom - top);
+  let d = `M0,${Y(pts[0][1]).toFixed(1)}`;
+  for (let i = 1; i < pts.length; i++) {
+    const x0 = X(pts[i - 1][0]), x1 = X(pts[i][0]), y0 = Y(pts[i - 1][1]), y1 = Y(pts[i][1]), mx = ((x0 + x1) / 2).toFixed(1);
+    d += ` C${mx},${y0.toFixed(1)} ${mx},${y1.toFixed(1)} ${x1.toFixed(1)},${y1.toFixed(1)}`;
+  }
+  $("#gLine").setAttribute("d", d);
+  $("#gArea").setAttribute("d", `${d} L${right},${h} L0,${h} Z`);
+  const dot = $("#gDot"); dot.style.left = right + "px"; dot.style.top = Y(G.shownSpeed) + "px";
+  if (G.hoverX != null) {  // আঙুল/মাউস রাখলে ওই মুহূর্তের গতি দেখায়
+    const t = Math.max(0, Math.min(1, G.hoverX / right)) * tNow;
+    let best = pts[0];
+    for (const p of pts) if (Math.abs(p[0] - t) < Math.abs(best[0] - t)) best = p;
+    const x = X(best[0]), tip = $("#gTip");
+    $("#gX").hidden = false; $("#gX").style.left = x + "px";
+    tip.hidden = false; tip.textContent = `${Math.round(best[0])} সেকেন্ডে · ${fmtSpeed(best[1]).join(" ")}`;
+    tip.style.left = Math.max(tip.offsetWidth / 2 + 4, Math.min(w - tip.offsetWidth / 2 - 4, x)) + "px";
+  } else { $("#gX").hidden = true; $("#gTip").hidden = true; }
+}
+{
+  const g = $("#graph");
+  const at = (e) => { G.hoverX = e.clientX - g.getBoundingClientRect().left; };
+  g.addEventListener("pointermove", at);
+  g.addEventListener("pointerdown", at);
+  g.addEventListener("pointerleave", () => { G.hoverX = null; });
+}
+
+// ---------- চলমান ডাউনলোড মনে রাখা ----------
+// ফোনে অ্যাপ বদলে ফিরে এলে পেজ আবার লোড হতে পারে; তখনো যেন ডাউনলোডের হিসাব দেখা যায়
+function rememberJob() {
+  try {
+    localStorage.setItem("job", JSON.stringify({ id: S.jobId, mode: S.mode, label: S.label, head: S.head,
+      startedAt: S.startedAt, firstByteAt: S.firstByteAt, info: S.info }));
+  } catch {}
+}
+function forgetJob() { localStorage.removeItem("job"); }
+
+function showProgress() {
+  $("#progress").hidden = false; $("#done").hidden = true;
+  gReset();
+  const tierEl = $("#pTier");
+  tierEl.hidden = !S.head.tierText; tierEl.className = S.head.tierClass; tierEl.textContent = S.head.tierText;
+  $("#pTitle").textContent = S.head.title;
+  $("#pSub").textContent = "ব্রাউজারে ডাউনলোড শুরু হয়েছে";
+  $("#cancelBtn").hidden = false;
+  clearInterval(S.timer);
+  S.timer = setInterval(poll, 500);
+}
+
+function startDownload(opts, label, row) {
+  if (!S.info || S.busy) return;
+  alertMsg(null); $("#done").hidden = true;
+  S.mode = opts.mode; S.label = label; S.row = row; S.last = { opts, label, row };
+  setBusy(true, row);
+
+  // চাপ দেওয়ামাত্র ব্রাউজারের নিজের ডাউনলোড শুরু হয়; সার্ভার নামাতে নামাতেই ফাইলটা পাঠাতে থাকে
+  const job = "j" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+  const q = new URLSearchParams({ t: S.info.token, u: S.info.url, mode: opts.mode, job });
+  if (opts.height) q.set("h", opts.height);
+  if (opts.scale) q.set("s", opts.scale);
+  saveFile("/api/stream?" + q.toString());
+  S.jobId = job; S.startedAt = Date.now(); S.firstByteAt = 0;
+
+  // কার্ডের মাথায়: কোয়ালিটির ব্যাজ (FHD, 4K…) আর কী নামছে
+  const t = row && row.querySelector(".tier"), main = row && row.querySelector(".qtext b");
+  S.head = {
+    tierClass: t ? t.className : "tier", tierText: t ? t.textContent : "",
+    title: opts.mode === "audio" ? "MP3 অডিও নামানো হচ্ছে" : `${main ? main.textContent : "ভিডিও"} ভিডিও নামানো হচ্ছে`,
+  };
+  rememberJob();
+  showProgress();
+  $("#progress").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+async function poll() {
+  if (!S.jobId) return;
+  let r, j;
+  try { r = await fetch("/api/progress/" + S.jobId, { cache: "no-store" }); } catch { return; }
+  if (r.status === 404) {
+    // ব্রাউজার এখনো সার্ভারে পৌঁছায়নি; বেশিক্ষণ না পৌঁছালে জানাই
+    if (Date.now() - S.startedAt > 20000) {
+      resetJob();
+      alertMsg("ডাউনলোড শুরু হয়নি। ব্রাউজার হয়তো ডাউনলোড আটকে দিয়েছে, আবার চেষ্টা করুন।");
+    }
+    return;
+  }
+  try { j = await r.json(); } catch { return; }
+
+  if (j.status === "starting" || j.status === "downloading") {
+    const started = j.status === "downloading" && j.bytes > 0;
+    gFeed(j.bytes || 0, j.est || 0);
+    if (G.t0 && !S.firstByteAt) {  // গড় গতির হিসাবের জন্য; পেজ রিলোড হলেও যেন ঠিক থাকে
+      S.firstByteAt = Date.now() - (performance.now() - G.t0);
+      rememberJob();
+    }
+    $("#pSub").textContent = started
+      ? (S.mode === "audio" ? "নামানোর সাথে সাথেই MP3 বানিয়ে পাঠানো হচ্ছে" : "নামানোর সাথে সাথেই ছবি আর শব্দ জোড়া লাগিয়ে পাঠানো হচ্ছে")
+      : "ভিডিওর সার্ভারের সাথে সংযোগ হচ্ছে…";
+  } else if (j.status === "done") {
+    clearInterval(S.timer);
+    finish(j);
+  } else if (j.status === "error") {
+    resetJob(); alertMsg(j.error);
+    $("#alert").scrollIntoView({ behavior: "smooth", block: "center" });
+  } else if (j.status === "cancelled") {
+    resetJob(); alertMsg("ডাউনলোড বাতিল করা হয়েছে।", "info");
+  }
+}
+
+function finish(j) {
+  const now = performance.now(), bytes = j.bytes || G.shown;
+  // কত সময়ে কত নামলো, সেটা শেষে দেখাই
+  const dlSecs = (Date.now() - (S.firstByteAt || S.startedAt)) / 1000;
+  const took = (Date.now() - S.startedAt) / 1000;
+  G.shown = bytes; G.finalT = G.t0 ? Math.max((now - G.t0) / 1000, 0.5) : 0;
+  if (G.t0) gDraw(now);
+  gStop();
+  $("#pPct").innerHTML = "100<small>%</small>"; $("#gBar").style.width = "100%";
+  $("#sDone").innerHTML = `<b>${fmtBytes(bytes)}</b>`; $("#sEta").textContent = "শেষ";
+  if (bytes > 0) $("#sAvg").textContent = fmtSpeed(bytes / Math.max(dlSecs, 0.5)).join(" ");
+  S.lastJob = S.jobId;  // সার্ভারে ফাইলটা কিছুক্ষণ থাকে; "আবার সেভ করুন" চাপলে আবার নামাতে হয় না
+  forgetJob();
+  setTimeout(() => {
+    $("#progress").hidden = true;
+    $("#fileName").textContent = j.filename; $("#fileSize").textContent = j.filesize || "";
+    $("#dStats").innerHTML = bytes > 0
+      ? `<span>${ICON.clock}<span><b>${fmtTook(took)}</b> নামলো</span></span>` +
+        `<span>${ICON.speed}<span>গড় গতি <b>${fmtSpeed(bytes / Math.max(dlSecs, 0.5)).join(" ")}</b></span></span>`
+      : "";
+    $("#done").hidden = false;
+    $("#done").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    setBusy(false);
+    S.jobId = null;
+  }, 600);
+}
+
+// পেজ আবার লোড হলে চলমান ডাউনলোড থাকলে সেটা আবার দেখাই
+(async () => {
+  let saved;
+  try { saved = JSON.parse(localStorage.getItem("job") || "null"); } catch {}
+  if (!saved || !saved.id || !saved.info || Date.now() - saved.startedAt > 3 * 3600e3) { forgetJob(); return; }
+  let j;
+  try {
+    const r = await fetch("/api/progress/" + saved.id, { cache: "no-store" });
+    if (!r.ok) throw 0;
+    j = await r.json();
+  } catch { forgetJob(); return; }
+  if (j.status !== "starting" && j.status !== "downloading") { forgetJob(); return; }
+  Object.assign(S, { info: saved.info, jobId: saved.id, mode: saved.mode, label: saved.label,
+                     head: saved.head, startedAt: saved.startedAt, firstByteAt: saved.firstByteAt || 0 });
+  render(saved.info);
+  setBusy(true);
+  showProgress();
+  poll();
+})();
+
+$("#cancelBtn").onclick = () => { if (S.jobId) fetch("/api/cancel/" + S.jobId, { method: "POST" }); $("#cancelBtn").hidden = true; $("#pTitle").textContent = "বাতিল করা হচ্ছে…"; };
+$("#againBtn").onclick = () => {
+  resetJob(); S.info = null; $("#result").hidden = true; urlIn.value = ""; alertMsg(null);
+  window.scrollTo({ top: 0, behavior: "smooth" }); setTimeout(() => urlIn.focus(), 300);
+};
+// ফোনে নেট কেটে গিয়ে ব্রাউজারের ডাউনলোড আটকে গেলে: সার্ভারে তৈরি হয়ে থাকা ফাইলটাই আবার দিই
+$("#redoBtn").onclick = () => {
+  if (S.lastJob) saveFile("/api/file/" + S.lastJob);
+  else if (S.last) startDownload(S.last.opts, S.last.label, S.last.row);
+};
+</script>
+</body>
+</html>
